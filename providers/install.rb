@@ -82,7 +82,7 @@ def configure
       # Just assume this is sensible like "95%" or "95 %"
       percent_factor = current['maxmemory'].to_f / 100.0
       # Ohai reports memory in KB as it looks in /proc/meminfo
-      maxmemory = (node_memory_kb * 1024 * percent_factor / new_resource.servers.length).to_s
+      maxmemory = (node_memory_kb * 1024 * percent_factor / new_resource.servers.length).floor.to_s
     end
 
     descriptors = current['ulimit'] == 0 ? current['maxclients'] + 32 : current['maxclients']
@@ -168,7 +168,7 @@ def configure
       end
       #Lay down the configuration files for the current instance
       template "#{current['configdir']}/#{server_name}.conf" do
-        source 'redis.conf.erb'
+        source "redis#{version_hash[:major]}.conf.erb"
         cookbook 'redisio'
         owner current['user']
         group current['group']
@@ -208,7 +208,12 @@ def configure
           :clusterenabled         => current['cluster-enabled'],
           :clusterconfigfile      => current['cluster-config-file'],
           :clusternodetimeout     => current['cluster-node-timeout'],
-          :includes               => current['includes']
+          :clusterslavevalidityfactor => current['cluster-slave-validity-factor'],
+          :clustermigrationbarrier=> current['cluster-migration-barrier'],
+          :clusterrequirefullcoverage => current['cluster-require-full-coverage'],
+          :includes               => current['includes'],
+          :stopwritesonbgsaveerror=> current['stop-writes-on-bgsave-error'],
+          :tcpkeepalive           => current['tcp-keepalive']
         })
       end
       #Setup init.d file

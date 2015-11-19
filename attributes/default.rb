@@ -22,10 +22,10 @@ when 'ubuntu','debian'
   homedir = '/var/lib/redis'
 when 'centos','redhat','scientific','amazon','suse'
   shell = '/bin/sh'
-  homedir = '/var/lib/redis' 
+  homedir = '/var/lib/redis'
 when 'fedora'
   shell = '/bin/sh'
-  homedir = '/home' #this is necessary because selinux by default prevents the homedir from being managed in /var/lib/ 
+  homedir = '/home' #this is necessary because selinux by default prevents the homedir from being managed in /var/lib/
 else
   shell = '/bin/sh'
   homedir = '/redis'
@@ -68,7 +68,7 @@ default['redisio']['default_settings'] = {
   'shutdown_save'          => false,
   'save'                   => nil, # Defaults to ['900 1','300 10','60 10000'] inside of template.  Needed due to lack of hash subtraction
   'slaveof'                => nil,
-  'job_control'            => 'initd', 
+  'job_control'            => 'initd',
   'masterauth'             => nil,
   'slaveservestaledata'    => 'yes',
   'replpingslaveperiod'    => '10',
@@ -84,7 +84,12 @@ default['redisio']['default_settings'] = {
   'aofrewriteminsize'      => '64mb',
   'cluster-enabled'        => 'no',
   'cluster-config-file'    => nil, # Defaults to redis instance name inside of template if cluster is enabled.
-  'cluster-node-timeout'   => 5,
+  'cluster-node-timeout'   => 15000,
+  'cluster-slave-validity-factor' => 10,
+  'cluster-migration-barrier' => 1,
+  'cluster-require-full-coverage' => 'yes',
+  'stop-writes-on-bgsave-error' => 'yes',
+  'tcp-keepalive'          => 0,
   'includes'               => nil
 }
 
